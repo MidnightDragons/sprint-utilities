@@ -8,13 +8,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.midnight.sprintutilities.Config;
+import org.midnight.sprintutilities.EquipmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import static org.midnight.sprintutilities.SprintUtilities.MODID;
 
@@ -70,30 +70,17 @@ public abstract class PlayerMixin {
 
 	@Unique
 	private void sprintutilities$damageEquipment(Player player) {
-		CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
-			TagKey<Item> tagToCheck = player.isUnderWater() ? REQUIRED_ITEM_TAG_FLIPPERS : REQUIRED_ITEM_TAG_BOOTS;
+		TagKey<Item> tag = player.isUnderWater() ? REQUIRED_ITEM_TAG_FLIPPERS : REQUIRED_ITEM_TAG_BOOTS;
+		ItemStack stack = EquipmentHelper.findEquipped(player, tag);
 
-			handler.findFirstCurio(stack -> stack.is(tagToCheck) && sprintutilities$isEquipmentNotBroken(stack))
-				.ifPresent(result -> {
-					ItemStack stack = result.stack();
-					stack.setDamageValue(Math.min(stack.getDamageValue() + 1, stack.getMaxDamage()));
-				}
-			);
-		});
+		if (!stack.isEmpty() && stack.isDamageableItem()) {
+			stack.setDamageValue(Math.min(stack.getDamageValue() + 1, stack.getMaxDamage()));
+		}
 	}
 
 	@Unique
 	private boolean sprintutilities$hasRequiredEquipmentEquipped(Player player, boolean areFlippers) {
 		TagKey<Item> tag = areFlippers ? REQUIRED_ITEM_TAG_FLIPPERS : REQUIRED_ITEM_TAG_BOOTS;
-
-		return CuriosApi.getCuriosInventory(player)
-			.map(handler -> handler.findFirstCurio(stack -> stack.is(tag) && sprintutilities$isEquipmentNotBroken(stack)).isPresent())
-			.orElse(false)
-		;
-	}
-
-	@Unique
-	private boolean sprintutilities$isEquipmentNotBroken(ItemStack stack) {
-		return stack.getDamageValue() < stack.getMaxDamage();
+		return !EquipmentHelper.findEquipped(player, tag).isEmpty();
 	}
 }
