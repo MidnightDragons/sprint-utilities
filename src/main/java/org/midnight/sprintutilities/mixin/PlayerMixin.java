@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.midnight.sprintutilities.Attributes;
 import org.midnight.sprintutilities.Config;
 import org.midnight.sprintutilities.EquipmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -81,6 +82,7 @@ public abstract class PlayerMixin {
 	@Unique
 	private boolean sprintutilities$hasRequiredEquipmentEquipped(Player player, boolean areFlippers) {
 		TagKey<Item> tag = areFlippers ? REQUIRED_ITEM_TAG_FLIPPERS : REQUIRED_ITEM_TAG_BOOTS;
-		return !EquipmentHelper.findEquipped(player, tag).isEmpty();
+		if (!EquipmentHelper.findEquipped(player, tag).isEmpty()) return true;
+		return EquipmentHelper.hasAttribute(player, areFlippers ? Attributes.SWIM_ENABLED : Attributes.SPRINT_ENABLED);
 	}
 }

@@ -1,6 +1,10 @@
 package org.midnight.sprintutilities;
 
+import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,5 +30,16 @@ public final class EquipmentHelper {
 	private static boolean isUsable(ItemStack stack, TagKey<Item> tag) {
 		if (stack.isEmpty() || !stack.is(tag)) return false;
 		return !stack.isDamageableItem() || stack.getDamageValue() < stack.getMaxDamage();
+	}
+
+	public static boolean hasAttribute(Player player, Holder<Attribute> attribute) {
+		AttributeInstance instance = player.getAttribute(attribute);
+		if (instance == null) return false;
+
+		for (AttributeModifier modifier : instance.getModifiers()) {
+			if (modifier.id().getPath().startsWith(TagAddAttribute.PREFIX)) continue;
+			if (modifier.amount() > 0) return true;
+		}
+		return false;
 	}
 }

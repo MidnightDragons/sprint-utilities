@@ -1,3 +1,5 @@
 {
-	"itemGroup.sprintutilities": "Sprint Utilities"
+	"itemGroup.sprintutilities":						"Sprint Utilities",
+	"attribute.name.sprintutilities.sprint_enabled":	"Allows Sprinting",
+	"attribute.name.sprintutilities.swim_enabled":		"Allows Swimming"
 }
