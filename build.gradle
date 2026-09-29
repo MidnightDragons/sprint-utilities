@@ -88,9 +88,9 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 	]
 
     inputs.properties replaceProperties
-    expand replaceProperties
-    from "src/main"
-    into "build/generated/sources/modMetadata"
+	filesMatching("META-INF/neoforge.mods.toml") {
+		expand replaceProperties
+	}
 }
 
 sourceSets.main.resources.srcDir generateModMetadata
