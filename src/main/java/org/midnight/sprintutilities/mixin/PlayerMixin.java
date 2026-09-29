@@ -35,7 +35,7 @@ public abstract class PlayerMixin {
 	 */
 	@ModifyVariable(method = "setSprinting", at = @At("HEAD"), argsOnly = true)
 	public boolean sprintutilities$modifySprinting(boolean sprinting) {
-		if (Config.COMMON.enableSprint.get()) return sprinting;
+		if (Config.SERVER.enableSprint.get()) return sprinting;
 
 		LivingEntity entity = (LivingEntity) (Object) this;
 		if (!(entity instanceof Player player)) return sprinting;
@@ -53,8 +53,8 @@ public abstract class PlayerMixin {
 
 	@Inject(method = "aiStep", at = @At("TAIL"))
 	private void sprintutilities$damageEquipmentWhileSprinting(CallbackInfo ci) {
-		if (Config.COMMON.enableSprint.get()) return;
-		if (!Config.COMMON.enableEquipmentDamage.get()) return;
+		if (Config.SERVER.enableSprint.get()) return;
+		if (!Config.SERVER.enableEquipmentDamage.get()) return;
 
 		LivingEntity entity = (LivingEntity) (Object) this;
 		if (!(entity instanceof Player player)) return;
@@ -62,7 +62,7 @@ public abstract class PlayerMixin {
 		if (player.isCreative() || player.isSpectator()) return;
 
 		sprintutilities$tickCounter++;
-		if (sprintutilities$tickCounter >= Config.COMMON.damageEquipmentTick.get()) {
+		if (sprintutilities$tickCounter >= Config.SERVER.damageEquipmentTick.get()) {
 			sprintutilities$tickCounter = 0;
 			sprintutilities$damageEquipment(player);
 		}
